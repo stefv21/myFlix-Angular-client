@@ -1,59 +1,85 @@
-# MyFlixAngularClient
+# MyFlix Angular Client
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.15.
+A movie database application built with Angular that allows users to browse movies, view details about directors and genres, and manage their favorite movies list.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- User registration and authentication
+- Browse movie collection with detailed information
+- View movie synopses, director bios, and genre descriptions
+- Add/remove movies from favorites
+- User profile management
+- Responsive Material Design UI
 
+## Technologies Used
+
+- Angular 19.2.0
+- Angular Material
+- TypeScript
+- RxJS
+- HTML5 & CSS3
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd myFlix-Angular-client
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+4. Navigate to `http://localhost:4200/`
 
-## Code scaffolding
+## API Integration
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+This application connects to the myFlix REST API hosted at:
+`https://aqueous-mountain-08725.herokuapp.com/`
 
+## Documentation
+
+Generate TypeDoc documentation:
+```bash
+npm run docs
+```
+View documentation at `./docs/index.html`
+
+## Development
+
+### Code Scaffolding
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
+### Building
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
+### Testing
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Project Structure
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```
+src/app/
+├── fetch-api-data.service.ts    # API service
+├── movie-card/                  # Movie display component
+├── movie-info-dialog/           # Movie details modal
+├── user-login-form/             # Login component
+├── user-registration-form/      # Registration component
+├── user-profile/                # Profile management
+└── welcome-page/                # Landing page
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Built with [Angular CLI](https://github.com/angular/angular-cli) version 19.2.15.

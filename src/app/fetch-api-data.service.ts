@@ -1,20 +1,32 @@
 import { Injectable } from '@angular/core';
-import { catchError } from 'rxjs/internal/operators';
+import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-//Declaring the api url that will provide data for the client app
-const apiUrl = 'YOUR_HOSTED_API_URL_HERE/';
+/** API base URL for the myFlix application */
+const apiUrl = 'https://aqueous-mountain-08725.herokuapp.com/';
+
+/**
+ * Service for handling API calls to the myFlix backend
+ * Provides methods for user authentication, movie data retrieval, and user profile management
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class UserRegistrationService {
-  // Inject the HttpClient module to the constructor params
- // This will provide HttpClient to the entire class, making it available via this.http
+  /**
+   * Constructor - Injects HttpClient for API calls
+   * @param http - Angular HttpClient for making HTTP requests
+   */
   constructor(private http: HttpClient) {
   }
- // Making the api call for the user registration endpoint
+
+  /**
+   * Registers a new user
+   * @param userDetails - User registration data
+   * @returns Observable with registration response
+   */
   public userRegistration(userDetails: any): Observable<any> {
     console.log(userDetails);
     return this.http.post(apiUrl + 'users', userDetails).pipe(
@@ -22,7 +34,11 @@ export class UserRegistrationService {
     );
   }
 
-  // User login
+  /**
+   * Authenticates user login
+   * @param userDetails - User login credentials
+   * @returns Observable with login response including token
+   */
   public userLogin(userDetails: any): Observable<any> {
     console.log(userDetails);
     return this.http.post(apiUrl + 'login', userDetails).pipe(
@@ -30,6 +46,10 @@ export class UserRegistrationService {
     );
   }
 
+  /**
+   * Retrieves all movies from the API
+   * @returns Observable with array of all movies
+   */
   getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(apiUrl + 'movies', {headers: new HttpHeaders(
@@ -41,7 +61,11 @@ export class UserRegistrationService {
     );
   }
 
-  // Get one movie
+  /**
+   * Retrieves a specific movie by title
+   * @param title - Movie title to search for
+   * @returns Observable with movie details
+   */
   getOneMovie(title: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(apiUrl + 'movies/' + title, {headers: new HttpHeaders({
@@ -52,7 +76,11 @@ export class UserRegistrationService {
     );
   }
 
-  // Get director
+  /**
+   * Retrieves director information
+   * @param directorName - Name of the director
+   * @returns Observable with director details
+   */
   getDirector(directorName: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(apiUrl + 'movies/director/' + directorName, {headers: new HttpHeaders({
@@ -63,7 +91,11 @@ export class UserRegistrationService {
     );
   }
 
-  // Get genre
+  /**
+   * Retrieves genre information
+   * @param genreName - Name of the genre
+   * @returns Observable with genre details
+   */
   getGenre(genreName: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(apiUrl + 'movies/genre/' + genreName, {headers: new HttpHeaders({
@@ -155,7 +187,7 @@ export class UserRegistrationService {
   }
 
 // Non-typed response extraction
-  private extractResponseData(res: Response): any {
+  private extractResponseData(res: any): any {
     const body = res;
     return body || { };
   }
