@@ -55,9 +55,10 @@ export class UserRegistrationFormComponent implements OnInit {
      this.snackBar.open('User registered successfully!', 'OK', {
         duration: 2000
      });
-    }, (result: any) => {
-      this.snackBar.open(result, 'OK', {
-        duration: 2000
+    }, (error: any) => {
+      const errorMessage = error.error?.message || error.message || 'Registration failed. Please try again.';
+      this.snackBar.open(errorMessage, 'OK', {
+        duration: 3000
       });
     });
   }

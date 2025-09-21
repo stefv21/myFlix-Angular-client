@@ -7,5 +7,6 @@ export const routes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
   { path: 'profile', component: UserProfileComponent },
-  { path: '', redirectTo: 'welcome', pathMatch: 'full' }
+  { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+  { path: '**', redirectTo: 'welcome' }
 ];

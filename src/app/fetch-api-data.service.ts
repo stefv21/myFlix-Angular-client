@@ -14,7 +14,7 @@ const apiUrl = 'https://aqueous-mountain-08725.herokuapp.com/';
 @Injectable({
   providedIn: 'root'
 })
-export class UserRegistrationService {
+export class ApiService {
   /**
    * Constructor - Injects HttpClient for API calls
    * @param http - Angular HttpClient for making HTTP requests
@@ -28,7 +28,6 @@ export class UserRegistrationService {
    * @returns Observable with registration response
    */
   public userRegistration(userDetails: any): Observable<any> {
-    console.log(userDetails);
     return this.http.post(apiUrl + 'users', userDetails).pipe(
     catchError(this.handleError)
     );
@@ -40,7 +39,6 @@ export class UserRegistrationService {
    * @returns Observable with login response including token
    */
   public userLogin(userDetails: any): Observable<any> {
-    console.log(userDetails);
     return this.http.post(apiUrl + 'login', userDetails).pipe(
       catchError(this.handleError)
     );
@@ -52,6 +50,9 @@ export class UserRegistrationService {
    */
   getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError('No authentication token found');
+    }
     return this.http.get(apiUrl + 'movies', {headers: new HttpHeaders(
       {
         Authorization: 'Bearer ' + token,
@@ -109,9 +110,13 @@ export class UserRegistrationService {
   // Get user
   getUser(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.get(apiUrl + 'users/' + user.Username, {
       headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + token,
       })
     }).pipe(
       map(this.extractResponseData),
@@ -123,6 +128,9 @@ export class UserRegistrationService {
   getFavouriteMovies(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.get(apiUrl + 'users/' + user.Username, {headers: new HttpHeaders({
       Authorization: 'Bearer ' + token,
     })}).pipe(
@@ -136,6 +144,9 @@ export class UserRegistrationService {
   addFavouriteMovie(movieId: string): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.post(apiUrl + 'users/' + user.Username + '/movies/' + movieId, {}, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -150,6 +161,9 @@ export class UserRegistrationService {
   editUser(updatedUser: any): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.put(apiUrl + 'users/' + user.Username, updatedUser, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -164,6 +178,9 @@ export class UserRegistrationService {
   deleteUser(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.delete(apiUrl + 'users/' + user.Username, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -177,6 +194,9 @@ export class UserRegistrationService {
   deleteFavouriteMovie(movieId: string): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    if (!user.Username || !token) {
+      return throwError('User not authenticated');
+    }
     return this.http.delete(apiUrl + 'users/' + user.Username + '/movies/' + movieId, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -194,11 +214,9 @@ export class UserRegistrationService {
 
 private handleError(error: HttpErrorResponse): any {
     if (error.error instanceof ErrorEvent) {
-    console.error('Some error occurred:', error.error.message);
+    console.error('Client-side error occurred');
     } else {
-    console.error(
-        `Error Status code ${error.status}, ` +
-        `Error body is: ${error.error}`);
+    console.error(`HTTP Error Status: ${error.status}`);
     }
     return throwError(
     'Something bad happened; please try again later.');

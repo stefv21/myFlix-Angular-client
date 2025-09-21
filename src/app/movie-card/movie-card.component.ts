@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserRegistrationService } from '../fetch-api-data.service';
+import { ApiService } from '../fetch-api-data.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,48 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MovieInfoDialogComponent } from '../movie-info-dialog/movie-info-dialog.component';
+
+interface Genre {
+  Name: string;
+  Description: string;
+}
+
+interface Director {
+  Name: string;
+  Bio: string;
+}
+
+interface Movie {
+  Title: string;
+  ImagePath: string;
+  Description: string;
+  Genre: Genre;
+  Director: Director;
+}
+
+const MOCK_MOVIES: Movie[] = [
+  { 
+    Title: 'The Matrix', 
+    ImagePath: 'https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg',
+    Description: 'A computer hacker learns about the true nature of reality.',
+    Genre: { Name: 'Sci-Fi', Description: 'Science fiction movies explore futuristic concepts.' },
+    Director: { Name: 'The Wachowskis', Bio: 'American film directors known for The Matrix series.' }
+  },
+  { 
+    Title: 'Inception', 
+    ImagePath: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
+    Description: 'A thief who steals corporate secrets through dream-sharing technology.',
+    Genre: { Name: 'Thriller', Description: 'Thriller movies are designed to hold interest and suspense.' },
+    Director: { Name: 'Christopher Nolan', Bio: 'British-American filmmaker known for complex narratives.' }
+  },
+  { 
+    Title: 'Interstellar', 
+    ImagePath: 'https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
+    Description: 'A team of explorers travel through a wormhole in space.',
+    Genre: { Name: 'Drama', Description: 'Drama movies focus on realistic characters and emotional themes.' },
+    Director: { Name: 'Christopher Nolan', Bio: 'British-American filmmaker known for complex narratives.' }
+  }
+];
 
 /**
  * Component for displaying movie cards with movie information
@@ -26,7 +68,7 @@ import { MovieInfoDialogComponent } from '../movie-info-dialog/movie-info-dialog
 })
 export class MovieCardComponent implements OnInit {
   /** Array of movies to display */
-  movies: any[] = [];
+  movies: Movie[] = [];
   
   /**
    * Constructor - Injects required services
@@ -35,7 +77,7 @@ export class MovieCardComponent implements OnInit {
    * @param snackBar - Material SnackBar service for notifications
    */
   constructor(
-    public fetchApiData: UserRegistrationService,
+    public fetchApiData: ApiService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
   ) { }
@@ -53,35 +95,11 @@ export class MovieCardComponent implements OnInit {
    */
   getMovies(): void {
     // Temporary mock data for testing
-    this.movies = [
-      { 
-        Title: 'The Matrix', 
-        ImagePath: 'https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg',
-        Description: 'A computer hacker learns about the true nature of reality.',
-        Genre: { Name: 'Sci-Fi', Description: 'Science fiction movies explore futuristic concepts.' },
-        Director: { Name: 'The Wachowskis', Bio: 'American film directors known for The Matrix series.' }
-      },
-      { 
-        Title: 'Inception', 
-        ImagePath: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
-        Description: 'A thief who steals corporate secrets through dream-sharing technology.',
-        Genre: { Name: 'Thriller', Description: 'Thriller movies are designed to hold interest and suspense.' },
-        Director: { Name: 'Christopher Nolan', Bio: 'British-American filmmaker known for complex narratives.' }
-      },
-      { 
-        Title: 'Interstellar', 
-        ImagePath: 'https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
-        Description: 'A team of explorers travel through a wormhole in space.',
-        Genre: { Name: 'Drama', Description: 'Drama movies focus on realistic characters and emotional themes.' },
-        Director: { Name: 'Christopher Nolan', Bio: 'British-American filmmaker known for complex narratives.' }
-      }
-    ];
+    this.movies = MOCK_MOVIES;
     
     // Uncomment this when your API is working:
     // this.fetchApiData.getAllMovies().subscribe((resp: any) => {
     //     this.movies = resp;
-    //     console.log(this.movies);
-    //     return this.movies;
     //   });
   }
 
@@ -89,7 +107,7 @@ export class MovieCardComponent implements OnInit {
    * Opens dialog displaying genre information
    * @param genre - Genre object containing name and description
    */
-  openGenreDialog(genre: any): void {
+  openGenreDialog(genre: Genre): void {
     this.dialog.open(MovieInfoDialogComponent, {
       data: {
         title: genre.Name,
@@ -103,7 +121,7 @@ export class MovieCardComponent implements OnInit {
    * Opens dialog displaying director information
    * @param director - Director object containing name and bio
    */
-  openDirectorDialog(director: any): void {
+  openDirectorDialog(director: Director): void {
     this.dialog.open(MovieInfoDialogComponent, {
       data: {
         title: director.Name,
@@ -117,7 +135,10 @@ export class MovieCardComponent implements OnInit {
    * Opens dialog displaying movie synopsis
    * @param movie - Movie object containing title and description
    */
-  openSynopsisDialog(movie: any): void {
+  openSynopsisDialog(movie: Movie): void {
+    if (!movie || !movie.Title || !movie.Description) {
+      return;
+    }
     this.dialog.open(MovieInfoDialogComponent, {
       data: {
         title: movie.Title,
@@ -131,7 +152,10 @@ export class MovieCardComponent implements OnInit {
    * Adds movie to user's favorites list
    * @param movie - Movie object to add to favorites
    */
-  addToFavorites(movie: any): void {
+  addToFavorites(movie: Movie): void {
+    if (!movie || !movie.Title) {
+      return;
+    }
     this.snackBar.open(`${movie.Title} added to favorites!`, 'OK', {
       duration: 2000
     });

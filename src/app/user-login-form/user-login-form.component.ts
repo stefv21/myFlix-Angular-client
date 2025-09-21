@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { UserRegistrationService } from '../fetch-api-data.service';
+import { ApiService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,7 @@ export class UserLoginFormComponent implements OnInit {
    * @param router - Angular router for navigation
    */
   constructor(
-    public fetchApiData: UserRegistrationService,
+    public fetchApiData: ApiService,
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
     public snackBar: MatSnackBar,
     private router: Router) { }
@@ -56,16 +56,17 @@ export class UserLoginFormComponent implements OnInit {
    */
   loginUser(): void {
     this.fetchApiData.userLogin(this.userData).subscribe((result: any) => {
-      localStorage.setItem('user', JSON.stringify(result.user));
-      localStorage.setItem('token', result.token);
+      sessionStorage.setItem('user', JSON.stringify(result.user));
+      sessionStorage.setItem('token', result.token);
       this.dialogRef.close();
       this.snackBar.open('User logged in successfully!', 'OK', {
         duration: 2000
       });
       this.router.navigate(['movies']);
-    }, (result: any) => {
-      this.snackBar.open('Login failed', 'OK', {
-        duration: 2000
+    }, (error: any) => {
+      const errorMessage = error.error?.message || error.message || 'Login failed. Please try again.';
+      this.snackBar.open(errorMessage, 'OK', {
+        duration: 3000
       });
     });
   }
